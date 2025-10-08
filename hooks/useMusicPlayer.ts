@@ -53,6 +53,7 @@ export const useMusicPlayer = () => {
         if (nextTrackIndex !== null) {
           player.replace(musicTracks[nextTrackIndex] as AudioSource);
           player.play();
+          setState((prev) => ({ ...prev, currentTrack: nextTrackIndex }));
         }
       }
     });
