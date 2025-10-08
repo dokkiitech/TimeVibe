@@ -13,32 +13,32 @@ export const GradientBackground: React.FC<{ children: React.ReactNode }> = ({ ch
       Animated.sequence([
         Animated.timing(animatedValue, {
           toValue: 1,
-          duration: 15000, // 15秒かけて変化
+          duration: 10000, // 10秒かけて変化
           useNativeDriver: false,
         }),
         Animated.timing(animatedValue, {
           toValue: 0,
-          duration: 15000,
+          duration: 10000,
           useNativeDriver: false,
         }),
       ])
     ).start();
   }, []);
 
-  // グラデーションの色を補間
+  // グラデーションの色を補間（幅広い変化）
   const color1 = animatedValue.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: ['rgba(10, 10, 30, 1)', 'rgba(20, 10, 40, 1)', 'rgba(10, 10, 30, 1)'],
+    outputRange: ['rgba(10, 10, 35, 1)', 'rgba(60, 30, 90, 1)', 'rgba(10, 10, 35, 1)'],
   });
 
   const color2 = animatedValue.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: ['rgba(20, 10, 40, 1)', 'rgba(30, 20, 60, 1)', 'rgba(20, 10, 40, 1)'],
+    outputRange: ['rgba(20, 10, 50, 1)', 'rgba(30, 60, 90, 1)', 'rgba(20, 10, 50, 1)'],
   });
 
   const color3 = animatedValue.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: ['rgba(15, 20, 50, 1)', 'rgba(10, 10, 30, 1)', 'rgba(15, 20, 50, 1)'],
+    outputRange: ['rgba(5, 25, 60, 1)', 'rgba(50, 20, 70, 1)', 'rgba(5, 25, 60, 1)'],
   });
 
   return (
