@@ -18,7 +18,12 @@ export default function App() {
   });
 
   const { formattedWorkTime, isRunning, start, pause, reset } = useWorkTimer();
-  const { isPlaying, play, pause: pauseMusic, currentTrackName } = useMusicPlayer();
+  const {
+    isPlaying,
+    play,
+    pause: pauseMusic,
+    currentTrackName,
+  } = useMusicPlayer();
   const appState = useRef<AppStateStatus>(AppState.currentState);
 
   // AppStateの変化を監視
@@ -78,6 +83,7 @@ export default function App() {
             <Text style={styles.trackName}>{currentTrackName}</Text>
           </View>
         )}
+
       </ResponsiveLayout>
       <PlayButton isPlaying={isPlaying} onPress={handlePlayPause} />
     </GradientBackground>

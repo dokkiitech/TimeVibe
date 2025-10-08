@@ -29,6 +29,7 @@ export const useMusicPlayer = () => {
 
   const player = useAudioPlayer();
   const previousTrackRef = useRef<number | null>(null);
+  const isPlayerLoadedOnce = useRef(false);
 
   // musicフォルダ内の音源リスト
   const musicTracks = [
@@ -81,7 +82,7 @@ export const useMusicPlayer = () => {
   // 再生開始
   const play = useCallback(async () => {
     try {
-      if (player.src) {
+      if (isPlayerLoadedOnce.current) {
         player.play();
       } else {
         const trackIndex = getRandomTrack();
@@ -89,6 +90,7 @@ export const useMusicPlayer = () => {
           player.replace(musicTracks[trackIndex] as AudioSource);
           player.play();
           setState((prev) => ({ ...prev, currentTrack: trackIndex }));
+          isPlayerLoadedOnce.current = true;
         }
       }
 
