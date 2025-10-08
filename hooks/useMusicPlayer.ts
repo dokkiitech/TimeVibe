@@ -6,6 +6,21 @@ interface MusicPlayerState {
   currentTrack: number | null;
 }
 
+const musicFileNames = [
+  'Barely',
+  'Dull',
+  'Empty',
+  'Epoch',
+  'Fake',
+  'Ice Cream',
+  'Notion',
+  'Something',
+  'Talk',
+  'Teleport',
+  'Trudge',
+  'Wired',
+];
+
 export const useMusicPlayer = () => {
   const [state, setState] = useState<MusicPlayerState>({
     isPlaying: false,
@@ -97,5 +112,7 @@ export const useMusicPlayer = () => {
     isPlaying: state.isPlaying,
     play,
     pause,
+    currentTrackName:
+      state.currentTrack !== null ? musicFileNames[state.currentTrack] : '',
   };
 };
