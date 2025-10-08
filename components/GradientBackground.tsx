@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Dimensions } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-const { width, height } = Dimensions.get('window');
 
 export const GradientBackground: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -52,8 +50,8 @@ export const GradientBackground: React.FC<{ children: React.ReactNode }> = ({ ch
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: width,
-    height: height,
+    width: '100%',
+    height: '100%',
   },
   gradient: {
     flex: 1,

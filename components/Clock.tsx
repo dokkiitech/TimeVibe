@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, useWindowDimensions } from 'react-native';
 
 export const Clock: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -21,7 +23,10 @@ export const Clock: React.FC = () => {
   };
 
   return (
-    <Text style={styles.clockText}>
+    <Text style={[
+      styles.clockText,
+      isLandscape ? styles.clockTextLandscape : styles.clockTextPortrait
+    ]}>
       {formatTime(currentTime)}
     </Text>
   );
@@ -29,9 +34,14 @@ export const Clock: React.FC = () => {
 
 const styles = StyleSheet.create({
   clockText: {
-    fontSize: 64,
     color: '#FFFFFF',
     fontWeight: '300',
     letterSpacing: 4,
+  },
+  clockTextPortrait: {
+    fontSize: 64,
+  },
+  clockTextLandscape: {
+    fontSize: 72,
   },
 });
