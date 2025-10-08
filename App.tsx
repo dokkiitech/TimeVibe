@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { AppState, AppStateStatus, Text, StyleSheet, View } from 'react-native';
 import { useFonts, Doto_400Regular, Doto_700Bold } from '@expo-google-fonts/doto';
+import { useKeepAwake } from 'expo-keep-awake';
 import { GradientBackground } from './components/GradientBackground';
 import { ResponsiveLayout } from './components/ResponsiveLayout';
 import { Clock } from './components/Clock';
@@ -10,6 +11,11 @@ import { PlayButton } from './components/PlayButton';
 import { useWorkTimer } from './hooks/useWorkTimer';
 import { useMusicPlayer } from './hooks/useMusicPlayer';
 import Waveform from './components/Waveform';
+
+const KeepAwakeComponent = () => {
+  useKeepAwake();
+  return null;
+};
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -73,6 +79,7 @@ export default function App() {
 
   return (
     <GradientBackground>
+      {isPlaying && <KeepAwakeComponent />}
       <StatusBar style="light" />
       <ResponsiveLayout>
         <Clock />
@@ -83,7 +90,6 @@ export default function App() {
             <Text style={styles.trackName}>{currentTrackName}</Text>
           </View>
         )}
-
       </ResponsiveLayout>
       <PlayButton isPlaying={isPlaying} onPress={handlePlayPause} />
     </GradientBackground>
