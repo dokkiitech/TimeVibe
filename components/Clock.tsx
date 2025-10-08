@@ -19,7 +19,7 @@ export const Clock: React.FC = () => {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
 
-    return `${hours}:${minutes}:${seconds}`;
+    return `${hours} ${minutes} ${seconds}`;
   };
 
   return (
@@ -35,13 +35,13 @@ export const Clock: React.FC = () => {
 const styles = StyleSheet.create({
   clockText: {
     color: '#FFFFFF',
-    fontWeight: '300',
-    letterSpacing: 4,
+    fontFamily: 'Doto_700Bold',
+    letterSpacing: 3,
   },
   clockTextPortrait: {
-    fontSize: 64,
+    fontSize: 56,
   },
   clockTextLandscape: {
-    fontSize: 72,
+    fontSize: 64,
   },
 });

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Audio } from 'expo-av';
-import { Asset } from 'expo-asset';
+import { useAudioPlayer, AudioSource } from 'expo-audio';
 
 interface MusicPlayerState {
   isPlaying: boolean;
@@ -13,8 +12,7 @@ export const useMusicPlayer = () => {
     currentTrack: null,
   });
 
-  const soundRef = useRef<Audio.Sound | null>(null);
-  const nextSoundRef = useRef<Audio.Sound | null>(null);
+  const player = useAudioPlayer();
   const previousTrackRef = useRef<number | null>(null);
 
   // musicフォルダ内の音源リスト
@@ -47,102 +45,34 @@ export const useMusicPlayer = () => {
     return randomIndex;
   }, [musicTracks.length]);
 
-  // 音源を読み込んでクロスフェードで再生
-  const playTrack = useCallback(async (trackIndex: number) => {
-    try {
-      if (trackIndex < 0 || trackIndex >= musicTracks.length) {
-        console.warn('Invalid track index');
-        return;
-      }
-
-      // 新しいサウンドオブジェクトを作成
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        musicTracks[trackIndex],
-        { shouldPlay: true, volume: 0 }, // 初期ボリューム0でフェードイン準備
-        (status) => {
-          // 曲終了時の処理
-          if (status.isLoaded && status.didJustFinish) {
-            loadNextTrack();
-          }
+  // 次の曲を自動再生
+  useEffect(() => {
+    const subscription = player.addListener('playbackStatusUpdate', (status) => {
+      if (status.isLoaded && status.didJustFinish) {
+        const nextTrackIndex = getRandomTrack();
+        if (nextTrackIndex !== null) {
+          player.replace(musicTracks[nextTrackIndex] as AudioSource);
+          player.play();
         }
-      );
-
-      // クロスフェード処理（2秒）
-      if (soundRef.current) {
-        // 既存の曲をフェードアウト
-        const fadeOutSteps = 20;
-        const fadeOutInterval = 2000 / fadeOutSteps;
-        let currentVolume = 1;
-
-        const fadeOutTimer = setInterval(async () => {
-          currentVolume -= 1 / fadeOutSteps;
-          if (currentVolume <= 0) {
-            clearInterval(fadeOutTimer);
-            await soundRef.current?.stopAsync();
-            await soundRef.current?.unloadAsync();
-            soundRef.current = newSound;
-          } else {
-            await soundRef.current?.setVolumeAsync(currentVolume);
-          }
-        }, fadeOutInterval);
-
-        // 新しい曲をフェードイン
-        let newVolume = 0;
-        const fadeInTimer = setInterval(async () => {
-          newVolume += 1 / fadeOutSteps;
-          if (newVolume >= 1) {
-            clearInterval(fadeInTimer);
-            await newSound.setVolumeAsync(1);
-          } else {
-            await newSound.setVolumeAsync(newVolume);
-          }
-        }, fadeOutInterval);
-      } else {
-        // 初回再生時はフェードインのみ
-        soundRef.current = newSound;
-        const fadeInSteps = 20;
-        const fadeInInterval = 2000 / fadeInSteps;
-        let volume = 0;
-
-        const fadeInTimer = setInterval(async () => {
-          volume += 1 / fadeInSteps;
-          if (volume >= 1) {
-            clearInterval(fadeInTimer);
-            await newSound.setVolumeAsync(1);
-          } else {
-            await newSound.setVolumeAsync(volume);
-          }
-        }, fadeInInterval);
       }
+    });
 
-      setState((prev) => ({ ...prev, currentTrack: trackIndex }));
-    } catch (error) {
-      console.error('Error playing track:', error);
-    }
-  }, [musicTracks]);
-
-  // 次の曲を読み込み
-  const loadNextTrack = useCallback(async () => {
-    const nextTrackIndex = getRandomTrack();
-    if (nextTrackIndex !== null) {
-      await playTrack(nextTrackIndex);
-    }
-  }, [getRandomTrack, playTrack]);
+    return () => {
+      subscription.remove();
+    };
+  }, [player, musicTracks, getRandomTrack]);
 
   // 再生開始
   const play = useCallback(async () => {
     try {
-      await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false, // バックグラウンド実行なし
-      });
-
-      if (soundRef.current) {
-        await soundRef.current.playAsync();
+      if (player.src) {
+        player.play();
       } else {
         const trackIndex = getRandomTrack();
         if (trackIndex !== null) {
-          await playTrack(trackIndex);
+          player.replace(musicTracks[trackIndex] as AudioSource);
+          player.play();
+          setState((prev) => ({ ...prev, currentTrack: trackIndex }));
         }
       }
 
@@ -150,31 +80,17 @@ export const useMusicPlayer = () => {
     } catch (error) {
       console.error('Error playing music:', error);
     }
-  }, [getRandomTrack, playTrack]);
+  }, [player, getRandomTrack, musicTracks]);
 
   // 一時停止
   const pause = useCallback(async () => {
     try {
-      if (soundRef.current) {
-        await soundRef.current.pauseAsync();
-      }
+      player.pause();
       setState((prev) => ({ ...prev, isPlaying: false }));
     } catch (error) {
       console.error('Error pausing music:', error);
     }
-  }, []);
-
-  // クリーンアップ
-  useEffect(() => {
-    return () => {
-      if (soundRef.current) {
-        soundRef.current.unloadAsync();
-      }
-      if (nextSoundRef.current) {
-        nextSoundRef.current.unloadAsync();
-      }
-    };
-  }, []);
+  }, [player]);
 
   return {
     isPlaying: state.isPlaying,

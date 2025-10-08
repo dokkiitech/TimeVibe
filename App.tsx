@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { AppState, AppStateStatus } from 'react-native';
+import { useFonts, Doto_400Regular, Doto_700Bold } from '@expo-google-fonts/doto';
 import { GradientBackground } from './components/GradientBackground';
 import { ResponsiveLayout } from './components/ResponsiveLayout';
 import { Clock } from './components/Clock';
@@ -10,6 +11,11 @@ import { useWorkTimer } from './hooks/useWorkTimer';
 import { useMusicPlayer } from './hooks/useMusicPlayer';
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Doto_400Regular,
+    Doto_700Bold,
+  });
+
   const { formattedWorkTime, isRunning, start, pause, reset } = useWorkTimer();
   const { isPlaying, play, pause: pauseMusic } = useMusicPlayer();
   const appState = useRef<AppStateStatus>(AppState.currentState);
@@ -54,6 +60,10 @@ export default function App() {
       start();
     }
   };
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <GradientBackground>

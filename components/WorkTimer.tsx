@@ -14,7 +14,7 @@ export const WorkTimer: React.FC<WorkTimerProps> = ({ formattedTime }) => {
       styles.timerText,
       isLandscape ? styles.timerTextLandscape : styles.timerTextPortrait
     ]}>
-      作業時間: {formattedTime}
+      working {formattedTime}
     </Text>
   );
 };
@@ -22,15 +22,15 @@ export const WorkTimer: React.FC<WorkTimerProps> = ({ formattedTime }) => {
 const styles = StyleSheet.create({
   timerText: {
     color: '#CCCCCC',
-    fontWeight: '300',
-    letterSpacing: 2,
+    fontFamily: 'Doto_400Regular',
+    letterSpacing: 1.5,
   },
   timerTextPortrait: {
     fontSize: 28,
-    marginTop: 20,
+    marginTop: 30,
   },
   timerTextLandscape: {
     fontSize: 32,
-    marginTop: 16,
+    marginTop: 24,
   },
 });
