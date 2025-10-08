@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+
 export const GradientBackground: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
@@ -11,12 +13,12 @@ export const GradientBackground: React.FC<{ children: React.ReactNode }> = ({ ch
       Animated.sequence([
         Animated.timing(animatedValue, {
           toValue: 1,
-          duration: 10000, // 10秒かけて変化
+          duration: 15000, // 15秒かけて変化
           useNativeDriver: false,
         }),
         Animated.timing(animatedValue, {
           toValue: 0,
-          duration: 10000,
+          duration: 15000,
           useNativeDriver: false,
         }),
       ])
@@ -24,26 +26,30 @@ export const GradientBackground: React.FC<{ children: React.ReactNode }> = ({ ch
   }, []);
 
   // グラデーションの色を補間
-  const backgroundColor = animatedValue.interpolate({
+  const color1 = animatedValue.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [
-      'rgb(10, 10, 30)',    // 深い青黒
-      'rgb(20, 10, 40)',    // 紫がかった黒
-      'rgb(10, 10, 30)',    // 深い青黒に戻る
-    ],
+    outputRange: ['rgba(10, 10, 30, 1)', 'rgba(20, 10, 40, 1)', 'rgba(10, 10, 30, 1)'],
+  });
+
+  const color2 = animatedValue.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: ['rgba(20, 10, 40, 1)', 'rgba(30, 20, 60, 1)', 'rgba(20, 10, 40, 1)'],
+  });
+
+  const color3 = animatedValue.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: ['rgba(15, 20, 50, 1)', 'rgba(10, 10, 30, 1)', 'rgba(15, 20, 50, 1)'],
   });
 
   return (
-    <Animated.View style={[styles.container, { backgroundColor }]}>
-      <LinearGradient
-        colors={['rgba(30, 20, 60, 0.3)', 'rgba(10, 10, 30, 0.5)', 'rgba(20, 30, 50, 0.3)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
-      >
-        {children}
-      </LinearGradient>
-    </Animated.View>
+    <AnimatedLinearGradient
+      colors={[color1, color2, color3] as any}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradient}
+    >
+      {children}
+    </AnimatedLinearGradient>
   );
 };
 
