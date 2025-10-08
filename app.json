@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TimeVibe-temp",
-    "slug": "TimeVibe-temp",
+    "name": "Lofi Clock",
+    "slug": "lofi-clock",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dokkiitech.TimeVibetemp",
+      "bundleIdentifier": "com.dokkiitech.LofiClock",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -29,11 +29,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "8af0ba24-6808-42e0-8342-131f705ca33a"
-      }
     }
   }
 }
